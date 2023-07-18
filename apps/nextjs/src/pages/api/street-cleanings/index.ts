@@ -6,7 +6,7 @@ export default function handler(
   request: NextApiRequest,
   response: NextApiResponse,
 ) {
-  allowMethods("GET", request.method, response);
+  allowMethods("POST", request.method, response);
 
   response.status(200).json({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
