@@ -8,6 +8,9 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
+    TEMP_IGMS_TOKEN: z.string(),
+    LISTING_ID_1: z.string(),
+    TEMP_API_TOKEN: z.string(),
   },
   /**
    * Specify your client-side environment variables schema here.
@@ -21,6 +24,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    TEMP_IGMS_TOKEN: process.env.TEMP_IGMS_TOKEN,
+    LISTING_ID_1: process.env.LISTING_ID_1,
+    TEMP_API_TOKEN: process.env.TEMP_API_TOKEN,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,

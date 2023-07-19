@@ -27,3 +27,10 @@ export interface IgmsResponse {
   meta?: IgmsMeta;
   error?: IgmsError;
 }
+
+export type IgmsPlatformType =
+  | "airgms"
+  | "airbnb"
+  | "homeaway"
+  | "booking"
+  | "vrbo";

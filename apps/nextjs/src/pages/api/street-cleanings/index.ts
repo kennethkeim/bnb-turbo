@@ -1,17 +1,21 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { allowMethods } from "~/utils/request";
+import { type StreetCleaningSchedule } from "~/utils/date";
+import { env } from "~/env.mjs";
+import { streetCleaningHandler } from "~/services/street-cleaning.service";
 
-export default function handler(
-  request: NextApiRequest,
-  response: NextApiResponse,
+const schedule: StreetCleaningSchedule = {
+  listing: env.LISTING_ID_1,
+  dayOfWeek: "Wednesday",
+  nthInMonth: [2, 4],
+  start: { hour: 8, minute: 30 },
+  end: { hour: 11, minute: 30 },
+  alertHoursBefore: 16,
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
 ) {
-  allowMethods("POST", request.method, response);
-
-  response.status(200).json({
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    body: request.body,
-    query: request.query,
-    cookies: request.cookies,
-  });
+  await streetCleaningHandler(req, res, schedule);
 }

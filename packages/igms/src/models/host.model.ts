@@ -1,9 +1,8 @@
-import { type IgmsResponse } from "./api.model";
+import { type IgmsPlatformType, type IgmsResponse } from "./api.model";
 
 interface IgmsHost {
   host_uid: string;
-  /** e.g. airgms or airbnb */
-  platform_type: string;
+  platform_type: IgmsPlatformType;
   name: string | null;
   thumbnail_url: string | null;
   email: string[];
