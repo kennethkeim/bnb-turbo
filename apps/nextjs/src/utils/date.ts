@@ -1,5 +1,6 @@
-import { type NextApiResponse } from "next";
 import { DateTime } from "luxon";
+
+import { ClientError, ServiceError } from "./exceptions";
 
 export const localTZ = "America/New_York";
 
@@ -14,7 +15,7 @@ export const weekdayIsNthInMonth = (date: DateTime): number => {
     const likeDaysISO = likeDaysInMonth.map((n) => n.toISO());
     console.debug(`Date: ${date.toISO()}.`);
     console.debug(`Like days in month: ${JSON.stringify(likeDaysISO)}.`);
-    throw new Error(`Could not find weekdayIsNthInMonth value.`);
+    throw new ServiceError(500, `Could not find weekdayIsNthInMonth value.`);
   }
 
   return indexInMonth + 1;
@@ -50,8 +51,7 @@ export interface StreetCleaningSchedule {
 
 export const getImminentCleaning = (
   schedule: Omit<StreetCleaningSchedule, "end">,
-  res: NextApiResponse,
-): DateTime | null => {
+): DateTime => {
   // Need to set tz since we'll be doing lots of relative date manipulation
   const now = DateTime.now().setZone(localTZ);
 
@@ -78,8 +78,7 @@ export const getImminentCleaning = (
     const cleaningsIso = cleaningStartTimes.map((n) => n?.toISO());
     const message = `No alert needed for: ${JSON.stringify(cleaningsIso)}.`;
     console.warn(message);
-    res.status(400).send(message);
-    return null;
+    throw new ClientError(400, message);
   }
 
   return imminentCleaning;

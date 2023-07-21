@@ -1,0 +1,71 @@
+import { type HttpStatusCode } from "axios";
+
+type ClientErrorCode =
+  | HttpStatusCode.Unauthorized
+  | HttpStatusCode.Forbidden
+  | HttpStatusCode.BadRequest
+  | HttpStatusCode.MethodNotAllowed;
+
+type ServiceErrorCode =
+  | HttpStatusCode.ServiceUnavailable
+  | HttpStatusCode.InternalServerError
+  | HttpStatusCode.GatewayTimeout;
+
+export class ApiError extends Error {
+  cause?: Error;
+
+  protected constructor(public status: HttpStatusCode, message: string) {
+    super(message);
+    this.name = "ApiError";
+  }
+
+  /** Set `cause` on existing `ApiError`. */
+  public setCause(cause: Error): ApiError {
+    this.cause = cause;
+    return this;
+  }
+
+  /**
+   * Instantiate new `ApiError` from an existing `Error`.
+   * I don't think this is a good idea - in most cases
+   * you probably want to wrap original `Error` by setting `cause`.
+   *
+   * Even in the very generic `getApiError` below, we want to have a
+   * separate message from the original `Error`.
+   */
+  // public static fromError(error: Error, status?: HttpStatusCode): ApiError {
+  //   const apiError = new ApiError(status ?? 500, error.message);
+  //   if (error.cause) apiError.setCause(getError(error.cause));
+  //   if (error.stack) apiError.setStack(error.stack);
+  //   return apiError;
+  // }
+}
+
+export class ClientError extends ApiError {
+  public constructor(status?: ClientErrorCode, message?: string) {
+    super(status ?? 400, message ?? "Bad Request.");
+  }
+}
+
+export class ServiceError extends ApiError {
+  public constructor(status?: ServiceErrorCode, message?: string) {
+    super(status ?? 500, message ?? "Internal Server Error.");
+  }
+}
+
+/** https://medium.com/with-orus/the-5-commandments-of-clean-error-handling-in-typescript-93a9cbdf1af5 */
+export const getError = (value: unknown): Error => {
+  if (value instanceof Error) return value;
+
+  let stringified = "[Unable to stringify the thrown value]";
+  try {
+    stringified = JSON.stringify(value);
+  } catch {}
+
+  return new Error(`[Stringified Error]: ${stringified}`);
+};
+
+export const getApiError = (value: unknown): ApiError => {
+  if (value instanceof ApiError) return value;
+  return new ServiceError().setCause(getError(value));
+};
