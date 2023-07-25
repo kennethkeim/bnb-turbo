@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 
-import { ClientError, ServiceError } from "./exceptions";
+import { NoActionRequiredError, ServiceError } from "./exceptions";
 
 export const localTZ = "America/New_York";
 
@@ -78,7 +78,7 @@ export const getImminentCleaning = (
     const cleaningsIso = cleaningStartTimes.map((n) => n?.toISO());
     const message = `No alert needed for: ${JSON.stringify(cleaningsIso)}.`;
     console.warn(message);
-    throw new ClientError(400, message);
+    throw new NoActionRequiredError(message);
   }
 
   return imminentCleaning;

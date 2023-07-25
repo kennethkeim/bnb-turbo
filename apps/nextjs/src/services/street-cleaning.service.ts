@@ -9,7 +9,7 @@ import {
   localTZ,
   type StreetCleaningSchedule,
 } from "~/utils/date";
-import { ClientError, getApiError } from "~/utils/exceptions";
+import { getApiError, NoActionRequiredError } from "~/utils/exceptions";
 import { igmsClient, IgmsUtil } from "~/utils/igms-client";
 import { allowMethods, auth } from "~/utils/request";
 
@@ -66,8 +66,7 @@ export async function streetCleaningHandler(
 
     const imminentCleaningIso = cleaningStart.toISO();
     if (!activeBooking) {
-      throw new ClientError(
-        400,
+      throw new NoActionRequiredError(
         `No active booking for cleaning: ${imminentCleaningIso}.`,
       );
     }

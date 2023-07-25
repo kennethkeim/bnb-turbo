@@ -11,10 +11,23 @@ type ServiceErrorCode =
   | HttpStatusCode.InternalServerError
   | HttpStatusCode.GatewayTimeout;
 
+/**
+ * "HTTP status codes are extensible."\
+ * https://www.rfc-editor.org/rfc/rfc2616#section-6.1.1
+ *
+ * This is useful for cron job schedulers that don't store the response body.
+ */
+enum CustomHttpStatus {
+  NoActionRequired = 230,
+}
+
 export class ApiError extends Error {
   cause?: Error;
 
-  protected constructor(public status: HttpStatusCode, message: string) {
+  protected constructor(
+    public status: HttpStatusCode | CustomHttpStatus,
+    message: string,
+  ) {
     super(message);
     this.name = "ApiError";
   }
@@ -44,6 +57,12 @@ export class ApiError extends Error {
 export class ClientError extends ApiError {
   public constructor(status?: ClientErrorCode, message?: string) {
     super(status ?? 400, message ?? "Bad Request.");
+  }
+}
+
+export class NoActionRequiredError extends ApiError {
+  public constructor(message: string) {
+    super(CustomHttpStatus.NoActionRequired, message);
   }
 }
 
