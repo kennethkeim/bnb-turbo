@@ -1,4 +1,7 @@
+import { type NextApiRequest, type NextApiResponse } from "next";
 import { type HttpStatusCode } from "axios";
+
+import { logger } from "./logger";
 
 type ClientErrorCode =
   | HttpStatusCode.Unauthorized
@@ -63,6 +66,8 @@ export class ClientError extends ApiError {
 export class NoActionRequiredError extends ApiError {
   public constructor(message: string) {
     super(CustomHttpStatus.NoActionRequired, message);
+    // suppress stack since it's not a real exception
+    this.stack = undefined;
   }
 }
 
@@ -87,4 +92,14 @@ export const getError = (value: unknown): Error => {
 export const getApiError = (value: unknown): ApiError => {
   if (value instanceof ApiError) return value;
   return new ServiceError().setCause(getError(value));
+};
+
+export const handleApiError = (
+  error: unknown,
+  req: NextApiRequest,
+  res: NextApiResponse,
+): void => {
+  const apiError = getApiError(error);
+  logger.error(apiError, req);
+  res.status(apiError.status).json({ message: apiError.message });
 };

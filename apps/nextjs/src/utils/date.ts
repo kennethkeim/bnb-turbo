@@ -77,7 +77,6 @@ export const getImminentCleaning = (
   if (!imminentCleaning) {
     const cleaningsIso = cleaningStartTimes.map((n) => n?.toISO());
     const message = `No alert needed for: ${JSON.stringify(cleaningsIso)}.`;
-    console.warn(message);
     throw new NoActionRequiredError(message);
   }
 

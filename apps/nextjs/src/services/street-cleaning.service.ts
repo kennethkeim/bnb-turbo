@@ -9,7 +9,7 @@ import {
   localTZ,
   type StreetCleaningSchedule,
 } from "~/utils/date";
-import { getApiError, NoActionRequiredError } from "~/utils/exceptions";
+import { handleApiError, NoActionRequiredError } from "~/utils/exceptions";
 import { igmsClient, IgmsUtil } from "~/utils/igms-client";
 import { allowMethods, auth } from "~/utils/request";
 
@@ -87,7 +87,6 @@ export async function streetCleaningHandler(
       message: `Sent alert to ${guest} for street cleaning: ${imminentCleaningIso}! 🚀`,
     });
   } catch (error) {
-    const { status, message } = getApiError(error);
-    response.status(status).json({ message });
+    handleApiError(error, request, response);
   }
 }
