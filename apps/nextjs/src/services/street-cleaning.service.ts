@@ -47,8 +47,8 @@ export async function streetCleaningHandler(
     // Get active booking
     const activeBooking = bookings.find((booking) => {
       const { local_checkin_dttm, local_checkout_dttm } = booking;
-      const checkin = DateTime.fromSQL(local_checkin_dttm).setZone(localTZ);
-      const checkout = DateTime.fromSQL(local_checkout_dttm).setZone(localTZ);
+      const checkin = DateTime.fromSQL(local_checkin_dttm, { zone: localTZ });
+      const checkout = DateTime.fromSQL(local_checkout_dttm, { zone: localTZ });
 
       const checkinMinutesBeforeCleaning = cleaningStart
         .diff(checkin)
