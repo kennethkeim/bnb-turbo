@@ -1,8 +1,10 @@
-import { Axios } from "axios";
+import axios from "axios";
 
 import { env } from "~/env.mjs";
 
-export const igmsClient = new Axios({
+// axios.create() vs new Axios() 🤨
+// https://github.com/axios/axios/issues/4710#issuecomment-1129302829
+export const igmsClient = axios.create({
   baseURL: "https://www.igms.com/api",
 });
 

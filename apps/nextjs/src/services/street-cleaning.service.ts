@@ -37,9 +37,7 @@ export async function streetCleaningHandler(
     const axiosResponse = await igmsClient.get(
       `/v1/bookings?${IgmsUtil.getTokenQuerystring()}&from_date=${qsFrom}&to_date=${qsTo}&booking_status=accepted`,
     );
-    const bookingsResponse = JSON.parse(
-      axiosResponse.data as string,
-    ) as IgmsBookingResponse;
+    const bookingsResponse = axiosResponse.data as IgmsBookingResponse;
 
     // Filter bookings to specific listing
     const bookings = bookingsResponse.data.filter((booking) => {
