@@ -33,11 +33,13 @@ const getLogUrl = (url?: string): string | undefined => {
 const _logger = winston.createLogger({
   transports: [new winston.transports.Console()],
   format: winston.format.json(),
+  // TODO: set per env
+  level: "debug",
 });
 
 export const logger = {
-  debug: (message: string, attributes?: LogAttributes): void => {
-    _logger.warn(message, attributes);
+  debug: (message?: string, attributes?: LogAttributes): void => {
+    _logger.debug(message ?? "Debug log", attributes);
   },
 
   info: (message: string, attributes?: LogAttributes): void => {

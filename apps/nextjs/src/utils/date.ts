@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 
 import { NoActionRequiredError, ServiceError } from "./exceptions";
+import { logger } from "./logger";
 
 export const localTZ = "America/New_York";
 
@@ -42,40 +43,52 @@ export const getLikeDaysInMonth = (
 
 export interface StreetCleaningSchedule {
   listing: string;
-  dayOfWeek: string;
-  nthInMonth: number[];
-  start: { hour: number; minute: number };
-  end: { hour: number; minute: number };
+  schedules: Array<{
+    dayOfWeek: string;
+    nthInMonth: number[];
+    start: { hour: number; minute: number };
+    end: { hour: number; minute: number };
+  }>;
   alertHoursBefore: number;
 }
 
 export const getImminentCleaning = (
-  schedule: Omit<StreetCleaningSchedule, "end">,
-): DateTime => {
+  scheduleCfg: Omit<StreetCleaningSchedule, "end">,
+): { start: DateTime; end: DateTime } => {
+  const { schedules, alertHoursBefore } = scheduleCfg;
   // Need to set tz since we'll be doing lots of relative date manipulation
   const now = DateTime.now().setZone(localTZ);
 
   // Get street cleaning start times in current month
-  const likeDaysInMonth = getLikeDaysInMonth(schedule.dayOfWeek, now);
-  const cleaningStartTimes = schedule.nthInMonth.map((n) => {
-    const dayOf = likeDaysInMonth[n - 1];
-    if (!dayOf) return null;
-    const { hour, minute } = schedule.start;
-    return dayOf.set({ hour, minute });
+  const cleanings = schedules.flatMap((schedule) => {
+    const likeDaysInMonth = getLikeDaysInMonth(schedule.dayOfWeek, now);
+    logger.debug("Like days in month.", {
+      list: likeDaysInMonth.map((d) => d.toISO()),
+    });
+    const cleaningsInner = schedule.nthInMonth.map((n) => {
+      const dayOf = likeDaysInMonth[n - 1];
+      if (!dayOf) return null;
+      return {
+        start: dayOf.set(schedule.start),
+        end: dayOf.set(schedule.end),
+      };
+    });
+    return cleaningsInner;
+  });
+  logger.debug("Cleaning start times.", {
+    list: cleanings.map((t) => t?.start.toISO()),
   });
 
   // Find imminent cleaning - if any
-  const imminentCleaning = cleaningStartTimes.find((cleaningStart) => {
-    if (!cleaningStart) return false;
-    const hoursUntilCleaning = cleaningStart.diff(now).as("hours");
-    return (
-      hoursUntilCleaning >= 0 && hoursUntilCleaning < schedule.alertHoursBefore
-    );
+  const imminentCleaning = cleanings.find((cleaning) => {
+    if (!cleaning) return false;
+    const hoursUntilCleaning = cleaning.start.diff(now).as("hours");
+    return hoursUntilCleaning >= 0 && hoursUntilCleaning < alertHoursBefore;
   });
 
   // Abort if no alerts needed
   if (!imminentCleaning) {
-    const cleaningsIso = cleaningStartTimes.map((n) => n?.toISO());
+    const cleaningsIso = cleanings.map((n) => n?.start?.toISO());
     const message = `No alert needed for: ${JSON.stringify(cleaningsIso)}.`;
     throw new NoActionRequiredError(message);
   }

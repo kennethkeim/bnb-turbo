@@ -6,10 +6,20 @@ import { streetCleaningHandler } from "~/services/street-cleaning.service";
 
 const schedule: StreetCleaningSchedule = {
   listing: env.LISTING_ID_1,
-  dayOfWeek: "Wednesday",
-  nthInMonth: [2, 4],
-  start: { hour: 8, minute: 30 },
-  end: { hour: 11, minute: 30 },
+  schedules: [
+    {
+      dayOfWeek: "Wednesday",
+      nthInMonth: [2, 4],
+      start: { hour: 8, minute: 30 },
+      end: { hour: 11, minute: 30 },
+    },
+    {
+      dayOfWeek: "Thursday",
+      nthInMonth: [2, 4],
+      start: { hour: 8, minute: 30 },
+      end: { hour: 11, minute: 30 },
+    },
+  ],
   alertHoursBefore: 16,
 };
 
