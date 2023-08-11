@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 
+import { type Cleaning, type ListingConfig } from "~/models/cleanings";
 import { NoActionRequiredError, ServiceError } from "./exceptions";
 import { logger } from "./logger";
 
@@ -41,21 +42,8 @@ export const getLikeDaysInMonth = (
   return likeDaysInMonth;
 };
 
-export interface StreetCleaningSchedule {
-  listing: string;
-  schedules: Array<{
-    dayOfWeek: string;
-    nthInMonth: number[];
-    start: { hour: number; minute: number };
-    end: { hour: number; minute: number };
-  }>;
-  alertHoursBefore: number;
-}
-
-export const getImminentCleaning = (
-  scheduleCfg: Omit<StreetCleaningSchedule, "end">,
-): { start: DateTime; end: DateTime } => {
-  const { schedules, alertHoursBefore } = scheduleCfg;
+export const getImminentCleaning = (listingCfg: ListingConfig): Cleaning => {
+  const { schedules, alertHoursBefore } = listingCfg;
   // Need to set tz since we'll be doing lots of relative date manipulation
   const now = DateTime.now().setZone(localTZ);
 

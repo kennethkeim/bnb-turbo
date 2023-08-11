@@ -1,10 +1,10 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { type StreetCleaningSchedule } from "~/utils/date";
 import { env } from "~/env.mjs";
+import { type ListingConfig } from "~/models/cleanings";
 import { streetCleaningHandler } from "~/services/street-cleaning.service";
 
-const schedule: StreetCleaningSchedule = {
+const listingCfg: ListingConfig = {
   listing: env.LISTING_ID_1,
   schedules: [
     {
@@ -27,5 +27,5 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  await streetCleaningHandler(req, res, schedule);
+  await streetCleaningHandler(req, res, listingCfg);
 }

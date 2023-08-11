@@ -3,28 +3,25 @@ import { DateTime } from "luxon";
 
 import { type IgmsBookingResponse } from "@acme/igms";
 
-import {
-  DTFormats,
-  getImminentCleaning,
-  localTZ,
-  type StreetCleaningSchedule,
-} from "~/utils/date";
+import { getImminentCleaning, localTZ } from "~/utils/date";
 import { handleApiError, NoActionRequiredError } from "~/utils/exceptions";
 import { igmsClient, IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
+import { getStreetCleaningMessage } from "~/utils/messages";
 import { allowMethods, auth } from "~/utils/request";
+import { type ListingConfig } from "~/models/cleanings";
 
 export async function streetCleaningHandler(
   request: NextApiRequest,
   response: NextApiResponse,
-  schedule: StreetCleaningSchedule,
+  listingCfg: ListingConfig,
 ) {
   try {
     allowMethods("POST", request.method);
     auth(request);
 
     /** Start of the imminent cleaning. */
-    const cleaning = getImminentCleaning(schedule);
+    const cleaning = getImminentCleaning(listingCfg);
     logger.debug(
       `Imminent cleaning: ${cleaning.start.toISO()} - ${cleaning.end.toISO()}.`,
     );
@@ -40,7 +37,7 @@ export async function streetCleaningHandler(
 
     // Filter bookings to specific listing
     const bookings = bookingsResponse.data.filter((booking) => {
-      return booking.listing_uid === schedule.listing;
+      return booking.listing_uid === listingCfg.listing;
     });
 
     // Get active booking
@@ -74,10 +71,8 @@ export async function streetCleaningHandler(
       );
     }
 
-    const readableDay = cleaning.start.toLocaleString(DTFormats.dateA);
-    const readableStart = cleaning.start.toLocaleString(DTFormats.timeA);
-    const readableEnd = cleaning.end.toLocaleString(DTFormats.timeA);
-    const guestMessage = `Hi! This is an automated message to alert you of a scheduled street cleaning on ${readableDay} from ${readableStart} to ${readableEnd}. If you are parked on the street in front of the property, you will need to move your vehicle during this time. Thank you!`;
+    const guestMessage = getStreetCleaningMessage(cleaning, listingCfg);
+    console.log(guestMessage);
 
     await igmsClient.post(
       `v1/message-booking-guest?${IgmsUtil.getTokenQuerystring()}`,
