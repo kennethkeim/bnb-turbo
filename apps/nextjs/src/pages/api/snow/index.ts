@@ -2,13 +2,17 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { handleApiError } from "~/utils/exceptions";
 import { logger } from "~/utils/logger";
+import { sendMail } from "~/utils/mailer";
 import { MathUtil } from "~/utils/math";
+import { getSnowAlertMessage, getSnowSummary } from "~/utils/messages";
 import { allowMethods, auth } from "~/utils/request";
 import { getSnowDepth } from "~/utils/weather";
 import { type LatLng } from "~/models/locations";
 
 const FORECAST_DAYS = 1;
 const LANC: LatLng = { latitude: 40.0379, longitude: -76.3055 };
+/** Snow depth threshold in inches */
+const DEPTH_THRESHOLD = 0;
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,11 +32,18 @@ export default async function handler(
       const larger = current.snowDepth > acc.snowDepth ? current : acc;
       return { ...larger };
     });
-    logger.info(`Max snow depth is ${maxDepth.snowDepth} at ${maxDepth.time}`);
 
-    res.status(200).json({
-      message: `I have alerted the humans to rid the Airbnb of snow and ice.`,
-    });
+    const summary = getSnowSummary(maxDepth, FORECAST_DAYS, DEPTH_THRESHOLD);
+    logger.info(summary);
+
+    if (maxDepth.snowDepth > DEPTH_THRESHOLD) {
+      await sendMail({
+        subject: "Airbnb Snow Alert",
+        html: getSnowAlertMessage(rounded, summary),
+      });
+    }
+
+    res.status(200).json({ message: summary });
   } catch (error) {
     handleApiError(error, req, res);
   }

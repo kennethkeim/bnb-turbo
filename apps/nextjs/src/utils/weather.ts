@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { fetchWeatherApi } from "openmeteo";
 
 import { type LatLng } from "~/models/locations";
@@ -47,7 +48,7 @@ export const getSnowDepth = async (
         Number(hourly.time()),
         Number(hourly.timeEnd()),
         hourly.interval(),
-      ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
+      ).map((t) => DateTime.fromMillis((t + utcOffsetSeconds) * 1000)),
       snowDepth: hourly.variables(0)?.valuesArray(),
     },
   } as const;
