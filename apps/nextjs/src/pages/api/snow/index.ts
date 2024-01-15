@@ -1,10 +1,13 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { DateTime } from "luxon";
 
-import { localTZ } from "~/utils/date";
-import { handleApiError, NoActionRequiredError } from "~/utils/exceptions";
-import { logger } from "~/utils/logger";
+import { handleApiError } from "~/utils/exceptions";
+import { MathUtil } from "~/utils/math";
 import { allowMethods, auth } from "~/utils/request";
+import { getSnowDepth } from "~/utils/weather";
+import { type LatLng } from "~/models/locations";
+
+const FORECAST_DAYS = 7;
+const LANC: LatLng = { latitude: 40.0379, longitude: -76.3055 };
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,6 +16,13 @@ export default async function handler(
   try {
     allowMethods("POST", req.method);
     auth(req);
+
+    const snowDepth = await getSnowDepth(LANC, FORECAST_DAYS);
+
+    const rounded = snowDepth.hourly.map((hr) => {
+      return { ...hr, snowDepth: MathUtil.roundTo2Decimals(hr.snowDepth) };
+    });
+    console.table(rounded);
 
     res.status(200).json({
       message: `I have alerted the humans to rid the Airbnb of snow and ice.`,
