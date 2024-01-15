@@ -6,6 +6,7 @@ import { env } from "~/env.mjs";
 import { type LatLng } from "~/models/locations";
 import { type TomorrowForcast } from "~/models/tomorrow";
 import { type SnowDepth } from "~/models/weather";
+import { localTZ } from "./date";
 
 // axios.create() vs new Axios() 🤨
 // https://github.com/axios/axios/issues/4710#issuecomment-1129302829
@@ -39,7 +40,9 @@ export const getSnowDepth = async (
     hourly: responseData.timelines.hourly
       .map((hr) => {
         return {
-          time: DateTime.fromISO(hr.time),
+          // Set local TZ so it's rendered in that TZ in email
+          // Does not change the moment in time this date points to, since the date is initialized from ISO string
+          time: DateTime.fromISO(hr.time).setZone(localTZ),
           snowDepth: hr.values.snowDepth ?? 0,
         };
       })
