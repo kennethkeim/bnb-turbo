@@ -7,7 +7,7 @@ import { allowMethods, auth } from "~/utils/request";
 import { getSnowDepth } from "~/utils/weather";
 import { type LatLng } from "~/models/locations";
 
-const FORECAST_DAYS = 5;
+const FORECAST_DAYS = 1;
 const LANC: LatLng = { latitude: 40.0379, longitude: -76.3055 };
 
 export default async function handler(
