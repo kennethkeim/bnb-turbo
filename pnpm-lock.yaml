@@ -188,7 +188,10 @@ importers:
         version: 13.4.4(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: ^4.22.1
-        version: 4.22.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0)
+        version: 4.22.1(next@13.4.4)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0)
+      nodemailer:
+        specifier: ^6.9.8
+        version: 6.9.8
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -217,6 +220,9 @@ importers:
       '@types/node':
         specifier: ^18.16.5
         version: 18.16.5
+      '@types/nodemailer':
+        specifier: ^6.4.14
+        version: 6.4.14
       '@types/react':
         specifier: ^18.2.8
         version: 18.2.8
@@ -295,7 +301,7 @@ importers:
         version: 13.4.4(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: ^4.22.1
-        version: 4.22.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0)
+        version: 4.22.1(next@13.4.4)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -379,7 +385,7 @@ importers:
     dependencies:
       typescript:
         specifier: latest
-        version: 5.1.6
+        version: 5.3.3
 
 packages:
 
@@ -3038,7 +3044,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 4.15.0(prisma@4.15.0)
-      next-auth: 4.22.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.22.1(next@13.4.4)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@13.4.4:
@@ -3739,7 +3745,7 @@ packages:
   /@types/keyv@3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 20.2.5
+      '@types/node': 18.16.5
     dev: false
 
   /@types/luxon@3.3.0:
@@ -3753,9 +3759,11 @@ packages:
   /@types/node@18.16.5:
     resolution: {integrity: sha512-seOA34WMo9KB+UA78qaJoCO20RJzZGVXQ5Sh6FWu0g/hfT44nKXnej3/tCQl7FL97idFpBhisLYCTB50S0EirA==}
 
-  /@types/node@20.2.5:
-    resolution: {integrity: sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==}
-    dev: false
+  /@types/nodemailer@6.4.14:
+    resolution: {integrity: sha512-fUWthHO9k9DSdPCSPRqcu6TWhYyxTBg382vlNIttSe9M7XfsT06y0f24KHXtbnijPGGRIcVvdKHTNikOI6qiHA==}
+    dependencies:
+      '@types/node': 18.16.5
+    dev: true
 
   /@types/prettier@2.7.3:
     resolution: {integrity: sha512-+68kP9yzs4LMp7VNh8gdzMSPZFL44MLGqiHWvttYJe+6qnuVr4Ek9wSBQoveqY/r+LwjCcU29kNVkidwim+kYA==}
@@ -3786,7 +3794,7 @@ packages:
   /@types/responselike@1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 20.2.5
+      '@types/node': 18.16.5
     dev: false
 
   /@types/scheduler@0.16.3:
@@ -6981,6 +6989,7 @@ packages:
   /image-size@0.6.3:
     resolution: {integrity: sha512-47xSUiQioGaB96nqtp5/q55m0aBQSQdyIloMOc/x+QVTDZLNmXE892IIDrJ0hM1A5vcNUDD5tDffkSP5lCaIIA==}
     engines: {node: '>=4.0'}
+    hasBin: true
     dev: false
 
   /image-size@1.0.2:
@@ -7595,6 +7604,7 @@ packages:
 
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
+    hasBin: true
     dependencies:
       argparse: 2.0.1
 
@@ -8790,7 +8800,7 @@ packages:
     resolution: {integrity: sha512-SrQrok4CATudVzBS7coSz26QRSmlK9TzzoFbeKfcPBUFPjcQM9Rqvr/DlJkOrwI/0KcgvMub1n1g5Jt9EgRn4A==}
     dev: false
 
-  /next-auth@4.22.1(next@13.4.4)(react-dom@18.2.0)(react@18.2.0):
+  /next-auth@4.22.1(next@13.4.4)(nodemailer@6.9.8)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-NTR3f6W7/AWXKw8GSsgSyQcDW6jkslZLH8AiZa5PQ09w1kR8uHtR9rez/E9gAq/o17+p0JYHE8QjF3RoniiObA==}
     peerDependencies:
       next: ^12.2.5 || ^13
@@ -8806,6 +8816,7 @@ packages:
       cookie: 0.5.0
       jose: 4.14.4
       next: 13.4.4(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
+      nodemailer: 6.9.8
       oauth: 0.9.15
       openid-client: 5.4.2
       preact: 10.13.2
@@ -8920,6 +8931,11 @@ packages:
   /node-stream-zip@1.15.0:
     resolution: {integrity: sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==}
     engines: {node: '>=0.12.0'}
+    dev: false
+
+  /nodemailer@6.9.8:
+    resolution: {integrity: sha512-cfrYUk16e67Ks051i4CntM9kshRYei1/o/Gi8K1d+R34OIs21xdFnW7Pt7EucmVKA0LKtqUGNcjMZ7ehjl49mQ==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /normalize-path@3.0.0:
@@ -11252,8 +11268,8 @@ packages:
     resolution: {integrity: sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==}
     engines: {node: '>=14.17'}
 
-  /typescript@5.1.6:
-    resolution: {integrity: sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==}
+  /typescript@5.3.3:
+    resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: false

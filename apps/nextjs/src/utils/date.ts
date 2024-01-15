@@ -95,6 +95,16 @@ export class DTFormats {
     minute: "2-digit",
   };
 
+  /** e.g. 'Thu, Apr 20, 11:27 AM EST' */
+  public static readonly dateTimeB: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  };
+
   /** e.g. 'Thursday, April 20' */
   public static readonly dateA: Intl.DateTimeFormatOptions = {
     weekday: "long",
