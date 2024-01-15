@@ -20,7 +20,7 @@ export const getSnowAlertMessage = (
   summary: string,
 ): string => {
   const rows = hourly.map((hr) => {
-    const time = hr.time.toLocaleString(DTFormats.dateTimeA);
+    const time = hr.time.toLocaleString(DTFormats.dateTimeB);
     return `<tr><td>${time}</td><td>${hr.snowDepth}"</td></tr>`;
   });
   return `
@@ -35,9 +35,9 @@ export const getSnowAlertMessage = (
 
 export const getSnowSummary = (
   maxDepth: SnowDepth["hourly"][number],
-  forecastDays: number,
+  forecastHours: number,
   depthThreshold: number,
 ): string => {
-  const readableTime = maxDepth.time.toLocaleString(DTFormats.dateTimeA);
-  return `Max snow depth in next ${forecastDays} days is ${maxDepth.snowDepth} inches at ${readableTime}. Alert threshold is > ${depthThreshold}.`;
+  const readableTime = maxDepth.time.toLocaleString(DTFormats.dateTimeB);
+  return `Max snow depth in next ${forecastHours} hours is ${maxDepth.snowDepth} inches at ${readableTime}. Alert threshold is > ${depthThreshold}.`;
 };

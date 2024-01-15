@@ -1,65 +1,48 @@
+import * as qs from "node:querystring";
+import axios from "axios";
 import { DateTime } from "luxon";
-import { fetchWeatherApi } from "openmeteo";
 
+import { env } from "~/env.mjs";
 import { type LatLng } from "~/models/locations";
+import { type TomorrowForcast } from "~/models/tomorrow";
 import { type SnowDepth } from "~/models/weather";
 
-const INCHES_PER_METER = 39.3701;
+// axios.create() vs new Axios() 🤨
+// https://github.com/axios/axios/issues/4710#issuecomment-1129302829
+export const tomorrowClient = axios.create({
+  baseURL: "https://api.tomorrow.io",
+});
 
 /**
  * Get snow depth forecast for a location (unit: inches)\
  * All number are precise - rounding is done at presentation/usage layer.\
- * Code generated from
- * https://open-meteo.com/en/docs/gfs-api#latitude=40.0379&longitude=-76.3055&hourly=snow_depth&daily=&forecast_days=1
  */
 export const getSnowDepth = async (
   latLong: LatLng,
-  forecastDays: number,
+  forecastHours: number,
 ): Promise<SnowDepth> => {
-  // Note: order of params matters!
-  const params = {
-    latitude: latLong.latitude,
-    longitude: latLong.longitude,
-    hourly: "snow_depth",
-    forecast_days: forecastDays,
+  const queryParams = {
+    location: `${latLong.latitude},${latLong.longitude}`,
+    apikey: env.WEATHER_API_KEY,
+    timesteps: `1h`,
+    units: `imperial`,
   };
-  const url = "https://api.open-meteo.com/v1/gfs";
-  const responses = await fetchWeatherApi(url, params);
+  const queryString = qs.encode(queryParams);
 
-  // Helper function to form time ranges
-  const range = (start: number, stop: number, step: number) =>
-    Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
+  const response = await tomorrowClient.get(
+    `/v4/weather/forecast?${queryString}`,
+  );
+  const responseData = response.data as TomorrowForcast;
 
-  // Process first location. Add a for-loop for multiple locations or weather models
-  const response = responses[0];
-  if (!response) throw new Error("No response from weather API");
-
-  // Attributes for timezone and location
-  const utcOffsetSeconds = response.utcOffsetSeconds();
-
-  const hourly = response.hourly();
-  if (!hourly || !hourly.variables(0))
-    throw new Error("No hourly data in weather API response");
-
-  // Note: The order of weather variables in the URL query and the indices below need to match!
-  const weatherData = {
-    hourly: {
-      time: range(
-        Number(hourly.time()),
-        Number(hourly.timeEnd()),
-        hourly.interval(),
-      ).map((t) => DateTime.fromMillis((t + utcOffsetSeconds) * 1000)),
-      snowDepth: hourly.variables(0)?.valuesArray(),
-    },
-  } as const;
-
-  const snowDepth: SnowDepth = {
-    hourly: weatherData.hourly.time.map((time, i) => {
-      const snowDepth = weatherData.hourly.snowDepth?.[i];
-      if (snowDepth === undefined) throw new Error("snowDepth is undefined");
-      return { time, snowDepth: snowDepth * INCHES_PER_METER };
-    }),
-  };
-
-  return snowDepth;
+  // Return only the first `forecastHours` hours of data
+  return {
+    hourly: responseData.timelines.hourly
+      .map((hr) => {
+        return {
+          time: DateTime.fromISO(hr.time),
+          snowDepth: hr.values.snowDepth ?? 0,
+        };
+      })
+      .slice(0, forecastHours),
+  } satisfies SnowDepth;
 };

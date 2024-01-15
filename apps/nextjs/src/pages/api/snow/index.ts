@@ -9,7 +9,7 @@ import { allowMethods, auth } from "~/utils/request";
 import { getSnowDepth } from "~/utils/weather";
 import { type LatLng } from "~/models/locations";
 
-const FORECAST_DAYS = 1;
+const FORECAST_HOURS = 48;
 const LANC: LatLng = { latitude: 40.0379, longitude: -76.3055 };
 /** Snow depth threshold in inches */
 const DEPTH_THRESHOLD = 0;
@@ -22,7 +22,7 @@ export default async function handler(
     allowMethods("POST", req.method);
     auth(req);
 
-    const snowDepth = await getSnowDepth(LANC, FORECAST_DAYS);
+    const snowDepth = await getSnowDepth(LANC, FORECAST_HOURS);
 
     const rounded = snowDepth.hourly.map((hr) => {
       return { ...hr, snowDepth: MathUtil.roundTo2Decimals(hr.snowDepth) };
@@ -33,7 +33,7 @@ export default async function handler(
       return { ...larger };
     });
 
-    const summary = getSnowSummary(maxDepth, FORECAST_DAYS, DEPTH_THRESHOLD);
+    const summary = getSnowSummary(maxDepth, FORECAST_HOURS, DEPTH_THRESHOLD);
     logger.info(summary);
 
     if (maxDepth.snowDepth > DEPTH_THRESHOLD) {

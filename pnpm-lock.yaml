@@ -192,9 +192,6 @@ importers:
       nodemailer:
         specifier: ^6.9.8
         version: 6.9.8
-      openmeteo:
-        specifier: ^1.1.3
-        version: 1.1.3
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -3172,13 +3169,6 @@ packages:
     dependencies:
       mkdirp: 1.0.4
       rimraf: 3.0.2
-    dev: false
-
-  /@openmeteo/sdk@1.7.1:
-    resolution: {integrity: sha512-4eSZAQSaPiQOaJ6SBNmL7/9DJ2QMFNAQjy9C0Y1tqj8Y6ug2t/mmu9Fsi2zw7PNDlawfRtfgVVAixQ/I1WPgNw==}
-    engines: {node: '>=12.0'}
-    dependencies:
-      flatbuffers: 23.5.26
     dev: false
 
   /@panva/hkdf@1.1.1:
@@ -6483,10 +6473,6 @@ packages:
       flatted: 3.2.7
       rimraf: 3.0.2
 
-  /flatbuffers@23.5.26:
-    resolution: {integrity: sha512-vE+SI9vrJDwi1oETtTIFldC/o9GsVKRM+s6EL0nQgxXlYV1Vc4Tk30hj4xGICftInKQKj1F3up2n8UbIVobISQ==}
-    dev: false
-
   /flatted@3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
 
@@ -7003,6 +6989,7 @@ packages:
   /image-size@0.6.3:
     resolution: {integrity: sha512-47xSUiQioGaB96nqtp5/q55m0aBQSQdyIloMOc/x+QVTDZLNmXE892IIDrJ0hM1A5vcNUDD5tDffkSP5lCaIIA==}
     engines: {node: '>=4.0'}
+    hasBin: true
     dev: false
 
   /image-size@1.0.2:
@@ -7617,6 +7604,7 @@ packages:
 
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
+    hasBin: true
     dependencies:
       argparse: 2.0.1
 
@@ -9197,14 +9185,6 @@ packages:
       lru-cache: 6.0.0
       object-hash: 2.2.0
       oidc-token-hash: 5.0.3
-    dev: false
-
-  /openmeteo@1.1.3:
-    resolution: {integrity: sha512-f4ycmEA9rnhH4mPkDSLAuZ9dCu33nZ2bP7pLUJmZp2YYAuIDrGDIWU/VXQPmG48l5s+vw0VcnH9+CMqL57oADQ==}
-    engines: {node: '>=12.0'}
-    dependencies:
-      '@openmeteo/sdk': 1.7.1
-      flatbuffers: 23.5.26
     dev: false
 
   /optionator@0.9.1:
