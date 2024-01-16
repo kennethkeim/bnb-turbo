@@ -4,15 +4,22 @@ import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import { env } from "~/env.mjs";
 import { apiConfig } from "../config";
 
+// https://app.brevo.com/settings/keys/smtp
+// https://nodemailer.com/smtp/#tls-options
 const smtpTransportOptions: SMTPTransport.Options = {
-  service: "SendinBlue",
   auth: { user: env.MAILER_USER, pass: env.MAILER_PASS },
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  // Does not mean we're not using TLS, see nodemailer link above
   secure: false,
+  // Require STARTTLS
+  requireTLS: true,
 };
 
 const defaults: SMTPTransport.Options = {
-  to: apiConfig.appEmail,
-  from: `"${apiConfig.appName}" <${apiConfig.appEmail}>`,
+  to: apiConfig.sysEventsRecipient,
+  from: `"${apiConfig.appName}" <${apiConfig.sysEventsSender}>`,
+  replyTo: apiConfig.sysEventsRecipient,
 };
 
 interface MailOptions {
