@@ -14,6 +14,8 @@ export const env = createEnv({
     MAILER_USER: z.string().email(),
     MAILER_PASS: z.string().min(3),
     WEATHER_API_KEY: z.string().min(3),
+    SYS_EVENTS_SENDER: z.string(),
+    SYS_EVENTS_RECIPIENT: z.string(),
   },
   /**
    * Specify your client-side environment variables schema here.
@@ -33,6 +35,8 @@ export const env = createEnv({
     MAILER_USER: process.env.MAILER_USER,
     MAILER_PASS: process.env.MAILER_PASS,
     WEATHER_API_KEY: process.env.WEATHER_API_KEY,
+    SYS_EVENTS_SENDER: process.env.SYS_EVENTS_SENDER,
+    SYS_EVENTS_RECIPIENT: process.env.SYS_EVENTS_RECIPIENT,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
