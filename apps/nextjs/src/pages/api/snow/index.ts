@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { handleApiError } from "~/utils/exceptions";
 import { logger } from "~/utils/logger";
-import { sendMail } from "~/utils/mailer";
+import { mailer } from "~/utils/mailer";
 import { MathUtil } from "~/utils/math";
 import { getSnowAlertMessage, getSnowSummary } from "~/utils/messages";
 import { allowMethods, auth } from "~/utils/request";
@@ -37,7 +37,7 @@ export default async function handler(
     logger.info(summary);
 
     if (maxDepth.snowDepth > DEPTH_THRESHOLD) {
-      await sendMail({
+      await mailer.send({
         subject: "Airbnb Snow Alert",
         html: getSnowAlertMessage(rounded, summary),
       });
