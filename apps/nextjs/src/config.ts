@@ -6,8 +6,4 @@
 export const apiConfig = {
   /** App name used in error report email */
   appName: "BNB API",
-  /** Email to send errors / system events / data to. */
-  sysEventsRecipient: "kkeim77@gmail.com",
-  /** Default sender of system events via email. */
-  sysEventsSender: "system@keims.app",
 };
