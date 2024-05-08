@@ -4,7 +4,11 @@ import { DateTime } from "luxon";
 import { type IgmsBookingResponse } from "@acme/igms";
 
 import { getImminentCleaning, localTZ } from "~/utils/date";
-import { handleApiError, NoActionRequiredError } from "~/utils/exceptions";
+import {
+  handleApiError,
+  NoActionRequiredError,
+  ServiceError,
+} from "~/utils/exceptions";
 import { igmsClient, IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
 import { getStreetCleaningMessage } from "~/utils/messages";
@@ -33,6 +37,9 @@ export async function streetCleaningHandler(
       `/v1/bookings?${IgmsUtil.getTokenQuerystring()}&from_date=${qsFrom}&to_date=${qsTo}&booking_status=accepted`,
     );
     const bookingsResponse = axiosResponse.data as IgmsBookingResponse;
+    if (bookingsResponse.error) {
+      throw new ServiceError(500, bookingsResponse.error.message);
+    }
     logger.debug(`Got ${bookingsResponse.data.length} bookings.`);
 
     // Filter bookings to specific listing
