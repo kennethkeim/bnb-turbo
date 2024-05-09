@@ -2,6 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { type HttpStatusCode } from "axios";
 
 import { logger } from "./logger";
+import { mailer } from "./mailer";
 
 type ClientErrorCode =
   | HttpStatusCode.Unauthorized
@@ -101,5 +102,15 @@ export const handleApiError = (
 ): void => {
   const apiError = getApiError(error);
   logger.error(apiError, req);
+  mailer
+    .send({
+      subject: "BNB API Error",
+      html: `
+        <pre>Error Message: ${apiError.message}</pre>
+        <pre>Error Name: ${apiError.name}</pre>
+        <pre>Error Status: ${apiError.status}</pre>
+        <pre>${apiError.stack}</pre>`,
+    })
+    .catch(() => console.log("Error sending email for error."));
   res.status(apiError.status).json({ message: apiError.message });
 };
