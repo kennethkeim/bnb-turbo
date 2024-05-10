@@ -12,6 +12,8 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@libsql/client": "^0.6.0",
+    "@prisma/adapter-libsql": "^5.13.0",
     "@prisma/client": "^5.13.0"
   },
   "devDependencies": {

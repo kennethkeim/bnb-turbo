@@ -8,6 +8,8 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
+    TURSO_DATABASE_URL: z.string(),
+    TURSO_DATABASE_TOKEN: z.string(),
     LISTING_ID_1: z.string(),
     HOST_ID: z.string(),
     TEMP_API_TOKEN: z.string(),
@@ -30,6 +32,8 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
+    TURSO_DATABASE_TOKEN: process.env.TURSO_DATABASE_TOKEN,
     LISTING_ID_1: process.env.LISTING_ID_1,
     HOST_ID: process.env.HOST_ID,
     TEMP_API_TOKEN: process.env.TEMP_API_TOKEN,
