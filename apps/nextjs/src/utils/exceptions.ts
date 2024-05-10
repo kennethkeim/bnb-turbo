@@ -109,7 +109,7 @@ export const handleApiError = (
       html: `
         <pre>Status: ${apiError.status}</pre>
         <pre>${apiError.stack}</pre>
-        <pre>${cause?.stack}</pre>`,
+        <pre>${cause?.stack ?? "No nested error"}</pre>`,
     })
     .catch(() => console.log("Error sending email for error."));
   res.status(apiError.status).json({ message: apiError.message });
