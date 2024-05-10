@@ -102,14 +102,14 @@ export const handleApiError = (
 ): void => {
   const apiError = getApiError(error);
   logger.error(apiError, req);
+  const cause = apiError.cause;
   mailer
     .send({
       subject: "BNB API Error",
       html: `
-        <pre>Error Message: ${apiError.message}</pre>
-        <pre>Error Name: ${apiError.name}</pre>
-        <pre>Error Status: ${apiError.status}</pre>
-        <pre>${apiError.stack}</pre>`,
+        <pre>Status: ${apiError.status}</pre>
+        <pre>${apiError.stack}</pre>
+        <pre>${cause?.stack}</pre>`,
     })
     .catch(() => console.log("Error sending email for error."));
   res.status(apiError.status).json({ message: apiError.message });
