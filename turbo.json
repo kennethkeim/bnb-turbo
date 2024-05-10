@@ -34,6 +34,8 @@
   "globalEnv": [
     "CI",
     "DATABASE_URL",
+    "TURSO_DATABASE_URL",
+    "TURSO_DATABASE_TOKEN",
     "DISCORD_CLIENT_ID",
     "DISCORD_CLIENT_SECRET",
     "IGMS_CLIENT_ID",
