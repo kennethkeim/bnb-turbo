@@ -17,4 +17,6 @@ export interface ListingConfig {
   /** Note: schedule 0 will be assumed to be the primary side of the street for the listing. See guest message for details. */
   schedules: [Schedule, Schedule];
   alertHoursBefore: number;
+  /** IGMS Host ID */
+  host: string;
 }

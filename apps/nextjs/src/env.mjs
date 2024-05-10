@@ -8,8 +8,8 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
-    TEMP_IGMS_TOKEN: z.string(),
     LISTING_ID_1: z.string(),
+    HOST_ID: z.string(),
     TEMP_API_TOKEN: z.string(),
     MAILER_USER: z.string().email(),
     MAILER_PASS: z.string().min(3),
@@ -29,8 +29,8 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
-    TEMP_IGMS_TOKEN: process.env.TEMP_IGMS_TOKEN,
     LISTING_ID_1: process.env.LISTING_ID_1,
+    HOST_ID: process.env.HOST_ID,
     TEMP_API_TOKEN: process.env.TEMP_API_TOKEN,
     MAILER_USER: process.env.MAILER_USER,
     MAILER_PASS: process.env.MAILER_PASS,

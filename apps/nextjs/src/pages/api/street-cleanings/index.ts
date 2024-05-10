@@ -5,6 +5,7 @@ import { type ListingConfig } from "~/models/cleanings";
 import { streetCleaningHandler } from "~/services/street-cleaning.service";
 
 const listingCfg: ListingConfig = {
+  host: env.HOST_ID,
   listing: env.LISTING_ID_1,
   schedules: [
     {

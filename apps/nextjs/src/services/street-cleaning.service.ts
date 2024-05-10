@@ -1,15 +1,16 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { DateTime } from "luxon";
 
+import { prisma } from "@acme/db";
 import { type IgmsBookingResponse } from "@acme/igms";
 
 import { getImminentCleaning, localTZ } from "~/utils/date";
 import {
+  ClientError,
   handleApiError,
   NoActionRequiredError,
-  ServiceError,
 } from "~/utils/exceptions";
-import { igmsClient, IgmsUtil } from "~/utils/igms-client";
+import { IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
 import { getStreetCleaningMessage } from "~/utils/messages";
 import { allowMethods, auth } from "~/utils/request";
@@ -24,6 +25,13 @@ export async function streetCleaningHandler(
     allowMethods("POST", request.method);
     auth(request);
 
+    const hostAcct = await prisma.account.findFirst({
+      where: { providerAccountId: listingCfg.host },
+    });
+    if (!hostAcct?.access_token) {
+      throw new ClientError(401, "Cannot get IGMS token.");
+    }
+
     /** Start of the imminent cleaning. */
     const cleaning = getImminentCleaning(listingCfg);
     logger.debug(
@@ -33,13 +41,11 @@ export async function streetCleaningHandler(
     // Get bookings in range - iGMS filters aren't accurate so I have to do start of day
     const qsFrom = cleaning.start.startOf("day").toISO();
     const qsTo = cleaning.end.toISO();
-    const axiosResponse = await igmsClient.get(
-      `/v1/bookings?${IgmsUtil.getTokenQuerystring()}&from_date=${qsFrom}&to_date=${qsTo}&booking_status=accepted`,
-    );
-    const bookingsResponse = axiosResponse.data as IgmsBookingResponse;
-    if (bookingsResponse.error) {
-      throw new ServiceError(500, bookingsResponse.error.message);
-    }
+    const qsToken = IgmsUtil.getTokenQuerystring(hostAcct.access_token);
+    const bookingsResponse = await IgmsUtil.request<IgmsBookingResponse>({
+      method: "get",
+      url: `/v1/bookings?${qsToken}&from_date=${qsFrom}&to_date=${qsTo}&booking_status=accepted`,
+    });
     logger.debug(`Got ${bookingsResponse.data.length} bookings.`);
 
     // Filter bookings to specific listing
@@ -81,13 +87,14 @@ export async function streetCleaningHandler(
     const guestMessage = getStreetCleaningMessage(cleaning, listingCfg);
     console.log(guestMessage);
 
-    await igmsClient.post(
-      `v1/message-booking-guest?${IgmsUtil.getTokenQuerystring()}`,
-      {
+    await IgmsUtil.request({
+      method: "post",
+      url: `v1/message-booking-guest?${qsToken}`,
+      data: {
         booking_uid: activeBooking.booking_uid,
         message: guestMessage,
       },
-    );
+    });
 
     const guest = activeBooking.guest_uid;
     response.status(200).json({

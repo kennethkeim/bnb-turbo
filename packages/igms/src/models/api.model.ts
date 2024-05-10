@@ -1,3 +1,12 @@
+export enum IgmsErrorCode {
+  Failure = 0,
+  ParameterError = 11,
+  Unauthorized = 12,
+  ApiMisconfigured = 13,
+  Forbidden = 14,
+  MethodNotAllowed = 15,
+}
+
 export interface IgmsError {
   message: string;
   /**
@@ -10,7 +19,7 @@ export interface IgmsError {
    * 14 Problems with Access Token scope\
    * 15 API method exists but not available for use right now\
    */
-  code: 0 | 11 | 12 | 13 | 14 | 15;
+  code: IgmsErrorCode;
   // ... may contain additional fields ...
 }
 

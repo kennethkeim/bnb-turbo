@@ -1,6 +1,8 @@
-import axios from "axios";
+import axios, { type AxiosRequestConfig } from "axios";
 
-import { env } from "~/env.mjs";
+import { IgmsErrorCode, type IgmsResponse } from "@acme/igms";
+
+import { ClientError } from "./exceptions";
 
 // axios.create() vs new Axios() 🤨
 // https://github.com/axios/axios/issues/4710#issuecomment-1129302829
@@ -9,7 +11,18 @@ export const igmsClient = axios.create({
 });
 
 export class IgmsUtil {
-  public static getTokenQuerystring(): string {
-    return `access_token=${env.TEMP_IGMS_TOKEN}`;
+  public static getTokenQuerystring(token: string): string {
+    return `access_token=${token}`;
+  }
+
+  public static async request<T extends IgmsResponse>(
+    request: AxiosRequestConfig,
+  ): Promise<T> {
+    const response = await igmsClient.request(request);
+    const igmsPayload = response.data as IgmsResponse;
+    if (igmsPayload.error?.code === IgmsErrorCode.Unauthorized) {
+      throw new ClientError(401, "IGMS token is invalid.");
+    }
+    return response.data as T;
   }
 }
