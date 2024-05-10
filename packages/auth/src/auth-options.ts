@@ -8,9 +8,13 @@ import {
 import DiscordProvider from "next-auth/providers/discord";
 
 import { prisma } from "@acme/db";
-import { type IgmsHostResponse } from "@acme/igms";
+import type { IgmsHost, IgmsHostResponse } from "@acme/igms";
 
 import { env } from "../env.mjs";
+
+const getIgmsHost = (response: IgmsHostResponse): IgmsHost | null => {
+  return response.data.find((host) => host.platform_type === "airbnb") ?? null;
+};
 
 /**
  * Module augmentation for `next-auth` types
@@ -101,6 +105,17 @@ export const authOptions: NextAuthOptions = {
             access_token: context.tokens.access_token,
           };
           const response = await axios.get(url, { params });
+
+          // Update user token (access_token does not get updated by Next Auth)
+          const user = getIgmsHost(response.data as IgmsHostResponse);
+          const account = await prisma.account.findFirst({
+            where: { providerAccountId: user?.host_uid },
+          });
+          await prisma.account.update({
+            where: { id: account?.id },
+            data: { access_token: context.tokens.access_token },
+          });
+
           // wtf does nextauth expect back here?
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return response.data;
@@ -110,9 +125,7 @@ export const authOptions: NextAuthOptions = {
       // extract user info
       profile(response: IgmsHostResponse) {
         console.log("GOT PROFIlE", response);
-        const user = response.data.find(
-          (host) => host.platform_type === "airbnb",
-        );
+        const user = getIgmsHost(response);
         if (!user) throw new Error("User not found");
         return {
           id: user.host_uid,

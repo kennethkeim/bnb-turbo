@@ -1,6 +1,6 @@
 import { type IgmsPlatformType, type IgmsResponse } from "./api.model";
 
-interface IgmsHost {
+export interface IgmsHost {
   host_uid: string;
   platform_type: IgmsPlatformType;
   name: string | null;
