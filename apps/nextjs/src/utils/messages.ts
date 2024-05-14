@@ -2,6 +2,10 @@ import { type Cleaning, type ListingConfig } from "~/models/cleanings";
 import { type SnowDepth } from "~/models/weather";
 import { DTFormats } from "./date";
 
+export const DEFAULT_MSG_4XX =
+  "Bad request (you're not bad, just your request).";
+export const DEFAULT_MSG_5XX = "Internal server error (don't panic).";
+
 export const getStreetCleaningMessage = (
   cleaning: Cleaning,
   listingCfg: ListingConfig,

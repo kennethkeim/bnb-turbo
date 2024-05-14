@@ -3,6 +3,7 @@ import { type HttpStatusCode } from "axios";
 
 import { logger } from "./logger";
 import { mailer } from "./mailer";
+import { DEFAULT_MSG_4XX, DEFAULT_MSG_5XX } from "./messages";
 
 type ClientErrorCode =
   | HttpStatusCode.Unauthorized
@@ -60,7 +61,7 @@ export class ApiError extends Error {
 
 export class ClientError extends ApiError {
   public constructor(status?: ClientErrorCode, message?: string) {
-    super(status ?? 400, message ?? "Bad Request.");
+    super(status ?? 400, message ?? DEFAULT_MSG_4XX);
   }
 }
 
@@ -74,7 +75,7 @@ export class NoActionRequiredError extends ApiError {
 
 export class ServiceError extends ApiError {
   public constructor(status?: ServiceErrorCode, message?: string) {
-    super(status ?? 500, message ?? "Internal Server Error.");
+    super(status ?? 500, message ?? DEFAULT_MSG_5XX);
   }
 }
 
