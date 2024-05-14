@@ -14,6 +14,7 @@ import { IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
 import { getStreetCleaningMessage } from "~/utils/messages";
 import { allowMethods, auth } from "~/utils/request";
+import { env } from "~/env.mjs";
 import { type ListingConfig } from "~/models/cleanings";
 
 export async function streetCleaningHandler(
@@ -28,7 +29,8 @@ export async function streetCleaningHandler(
     const hostAcct = await prisma.account.findFirst({
       where: { providerAccountId: listingCfg.host },
     });
-    if (!hostAcct?.access_token) {
+    const accessToken = hostAcct?.access_token ?? env.TEMP_IGMS_TOKEN;
+    if (!accessToken) {
       throw new ClientError(401, "Cannot get IGMS token.");
     }
 
@@ -41,7 +43,7 @@ export async function streetCleaningHandler(
     // Get bookings in range - iGMS filters aren't accurate so I have to do start of day
     const qsFrom = cleaning.start.startOf("day").toISO();
     const qsTo = cleaning.end.toISO();
-    const qsToken = IgmsUtil.getTokenQuerystring(hostAcct.access_token);
+    const qsToken = IgmsUtil.getTokenQuerystring(accessToken);
     const bookingsResponse = await IgmsUtil.request<IgmsBookingResponse>({
       method: "get",
       url: `/v1/bookings?${qsToken}&from_date=${qsFrom}&to_date=${qsTo}&booking_status=accepted`,
