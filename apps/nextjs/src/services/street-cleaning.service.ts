@@ -7,6 +7,7 @@ import { type IgmsBookingResponse } from "@acme/igms";
 import { getImminentCleaning, localTZ } from "~/utils/date";
 import {
   ClientError,
+  getApiError,
   handleApiError,
   NoActionRequiredError,
 } from "~/utils/exceptions";
@@ -26,9 +27,14 @@ export async function streetCleaningHandler(
     allowMethods("POST", request.method);
     auth(request);
 
-    const hostAcct = await prisma.account.findFirst({
-      where: { providerAccountId: listingCfg.host },
-    });
+    let hostAcct;
+    try {
+      hostAcct = await prisma.account.findFirst({
+        where: { providerAccountId: listingCfg.host },
+      });
+    } catch (err) {
+      logger.error(getApiError(err), {});
+    }
     const accessToken = hostAcct?.access_token ?? env.TEMP_IGMS_TOKEN;
     if (!accessToken) {
       throw new ClientError(401, "Cannot get IGMS token.");
