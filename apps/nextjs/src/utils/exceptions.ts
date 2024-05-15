@@ -106,13 +106,19 @@ export const handleApiError = async (
   const cause = apiError.cause;
 
   try {
+    const now = new Date();
+    // ISO: 2024-05-15T12:47:23.039Z
+    // Add date and hour to subject line so gmail groups emails per hour
+    const subjectDateStr = now.toISOString().slice(0, 13);
+
     // Can't fire and forget from serverless fn
     await mailer.send({
-      subject: "BNB API Error",
+      subject: `BNB Error - ${apiError.status} - ${subjectDateStr}`,
       html: `
           <pre>Status: ${apiError.status}</pre>
           <pre>${apiError.stack}</pre>
-          <pre>${cause?.stack ?? "No nested error"}</pre>`,
+          <pre>${cause?.stack ?? "No nested error"}</pre>
+          <pre>Time: ${now.toISOString()}</pre>`,
     });
   } catch (err) {
     console.log("Error sending email for error.");

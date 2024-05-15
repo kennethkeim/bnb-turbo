@@ -7,7 +7,6 @@ import { type IgmsBookingResponse } from "@acme/igms";
 import { getImminentCleaning, localTZ } from "~/utils/date";
 import {
   ClientError,
-  getApiError,
   handleApiError,
   NoActionRequiredError,
 } from "~/utils/exceptions";
