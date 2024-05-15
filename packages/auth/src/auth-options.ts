@@ -111,10 +111,14 @@ export const authOptions: NextAuthOptions = {
           const account = await prisma.account.findFirst({
             where: { providerAccountId: user?.host_uid },
           });
-          await prisma.account.update({
-            where: { id: account?.id },
-            data: { access_token: context.tokens.access_token },
-          });
+
+          // Next auth creates the account on first login, no updates needed then
+          if (account?.id) {
+            await prisma.account.update({
+              where: { id: account?.id },
+              data: { access_token: context.tokens.access_token },
+            });
+          }
 
           // wtf does nextauth expect back here?
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
