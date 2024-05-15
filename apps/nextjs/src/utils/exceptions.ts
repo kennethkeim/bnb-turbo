@@ -96,22 +96,25 @@ export const getApiError = (value: unknown): ApiError => {
   return new ServiceError().setCause(getError(value));
 };
 
-export const handleApiError = (
+export const handleApiError = async (
   error: unknown,
   req: NextApiRequest,
   res: NextApiResponse,
-): void => {
+): Promise<void> => {
   const apiError = getApiError(error);
   logger.error(apiError, req);
   const cause = apiError.cause;
-  mailer
-    .send({
+  try {
+    // Can't fire and forget from serverless fn
+    await mailer.send({
       subject: "BNB API Error",
       html: `
-        <pre>Status: ${apiError.status}</pre>
-        <pre>${apiError.stack}</pre>
-        <pre>${cause?.stack ?? "No nested error"}</pre>`,
-    })
-    .catch(() => console.log("Error sending email for error."));
+          <pre>Status: ${apiError.status}</pre>
+          <pre>${apiError.stack}</pre>
+          <pre>${cause?.stack ?? "No nested error"}</pre>`,
+    });
+  } catch (err) {
+    console.log("Error sending email for error.");
+  }
   res.status(apiError.status).json({ message: apiError.message });
 };

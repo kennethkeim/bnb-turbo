@@ -109,6 +109,6 @@ export async function streetCleaningHandler(
       message: `Sent alert to ${guest} for street cleaning: ${imminentCleaningIso}! 🚀`,
     });
   } catch (error) {
-    handleApiError(error, request, response);
+    await handleApiError(error, request, response);
   }
 }

@@ -45,6 +45,6 @@ export default async function handler(
 
     res.status(200).json({ message: summary });
   } catch (error) {
-    handleApiError(error, req, res);
+    await handleApiError(error, req, res);
   }
 }
