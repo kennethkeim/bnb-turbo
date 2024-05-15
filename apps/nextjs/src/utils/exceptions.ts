@@ -98,12 +98,13 @@ export const getApiError = (value: unknown): ApiError => {
 
 export const handleApiError = async (
   error: unknown,
-  req: NextApiRequest,
-  res: NextApiResponse,
+  req?: NextApiRequest,
+  res?: NextApiResponse,
 ): Promise<void> => {
   const apiError = getApiError(error);
-  logger.error(apiError, req);
+  logger.error(apiError, req ?? {});
   const cause = apiError.cause;
+
   try {
     // Can't fire and forget from serverless fn
     await mailer.send({
@@ -116,5 +117,6 @@ export const handleApiError = async (
   } catch (err) {
     console.log("Error sending email for error.");
   }
-  res.status(apiError.status).json({ message: apiError.message });
+
+  res?.status(apiError.status).json({ message: apiError.message });
 };

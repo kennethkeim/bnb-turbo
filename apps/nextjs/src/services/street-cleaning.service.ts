@@ -33,7 +33,7 @@ export async function streetCleaningHandler(
         where: { providerAccountId: listingCfg.host },
       });
     } catch (err) {
-      logger.error(getApiError(err), {});
+      await handleApiError(err);
     }
     const accessToken = hostAcct?.access_token ?? env.TEMP_IGMS_TOKEN;
     if (!accessToken) {
