@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { handleApiError } from "@kennethkeim/api-utils-core";
 
-import { handleApiError } from "~/utils/exceptions";
 import { logger } from "~/utils/logger";
 import { mailer } from "~/utils/mailer";
 import { MathUtil } from "~/utils/math";
@@ -45,6 +45,6 @@ export default async function handler(
 
     res.status(200).json({ message: summary });
   } catch (error) {
-    await handleApiError(error, req, res);
+    await handleApiError(error, logger, mailer, res);
   }
 }
