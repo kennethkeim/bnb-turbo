@@ -6,7 +6,6 @@ import { prisma } from "@acme/db";
 import { type IgmsBookingResponse } from "@acme/igms";
 
 import { getImminentCleaning, localTZ } from "~/utils/date";
-import { NoActionRequiredError } from "~/utils/exceptions";
 import { IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
 import { mailer } from "~/utils/mailer";
@@ -38,7 +37,12 @@ export async function streetCleaningHandler(
     }
 
     /** Start of the imminent cleaning. */
-    const cleaning = getImminentCleaning(listingCfg);
+    const cleaningResult = getImminentCleaning(listingCfg);
+    const cleaning = cleaningResult.data;
+    if (!cleaning) {
+      response.status(200).json({ message: cleaningResult.message });
+      return;
+    }
     logger.debug(
       `Imminent cleaning: ${cleaning.start.toISO()} - ${cleaning.end.toISO()}.`,
     );
@@ -84,9 +88,9 @@ export async function streetCleaningHandler(
 
     const imminentCleaningIso = cleaning.start.toISO();
     if (!activeBooking) {
-      throw new NoActionRequiredError(
-        `No active booking for cleaning: ${imminentCleaningIso}.`,
-      );
+      const message = `No active booking for street cleaning: ${imminentCleaningIso}.`;
+      response.status(200).json({ message });
+      return;
     }
 
     const guestMessage = getStreetCleaningMessage(cleaning, listingCfg);
@@ -102,7 +106,7 @@ export async function streetCleaningHandler(
     });
 
     const guest = activeBooking.guest_uid;
-    response.status(200).json({
+    response.status(201).json({
       message: `Sent alert to ${guest} for street cleaning: ${imminentCleaningIso}! 🚀`,
     });
   } catch (error) {

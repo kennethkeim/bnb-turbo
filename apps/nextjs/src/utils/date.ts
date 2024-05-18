@@ -1,8 +1,7 @@
-import { ServiceError } from "@kennethkeim/api-utils-core";
+import { ServiceError, type Result } from "@kennethkeim/api-utils-core";
 import { DateTime } from "luxon";
 
 import { type Cleaning, type ListingConfig } from "~/models/cleanings";
-import { NoActionRequiredError } from "./exceptions";
 import { logger } from "./logger";
 
 export const localTZ = "America/New_York";
@@ -43,7 +42,9 @@ export const getLikeDaysInMonth = (
   return likeDaysInMonth;
 };
 
-export const getImminentCleaning = (listingCfg: ListingConfig): Cleaning => {
+export const getImminentCleaning = (
+  listingCfg: ListingConfig,
+): Result<Cleaning> => {
   const { schedules, alertHoursBefore } = listingCfg;
   // Need to set tz since we'll be doing lots of relative date manipulation
   const now = DateTime.now().setZone(localTZ);
@@ -78,11 +79,13 @@ export const getImminentCleaning = (listingCfg: ListingConfig): Cleaning => {
   // Abort if no alerts needed
   if (!imminentCleaning) {
     const cleaningsIso = cleanings.map((n) => n?.start?.toISO());
-    const message = `No alert needed for: ${JSON.stringify(cleaningsIso)}.`;
-    throw new NoActionRequiredError(message);
+    const message = `No street cleanings within alert window. Cleanings: ${JSON.stringify(
+      cleaningsIso,
+    )}.`;
+    return { message };
   }
 
-  return imminentCleaning;
+  return { data: imminentCleaning };
 };
 
 /** DateTime formats */
