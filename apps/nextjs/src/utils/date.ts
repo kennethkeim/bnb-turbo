@@ -1,7 +1,8 @@
+import { ServiceError } from "@kennethkeim/api-utils-core";
 import { DateTime } from "luxon";
 
 import { type Cleaning, type ListingConfig } from "~/models/cleanings";
-import { NoActionRequiredError, ServiceError } from "./exceptions";
+import { NoActionRequiredError } from "./exceptions";
 import { logger } from "./logger";
 
 export const localTZ = "America/New_York";

@@ -1,7 +1,6 @@
 import { type NextApiRequest } from "next";
+import { type ApiError } from "@kennethkeim/api-utils-core";
 import winston from "winston";
-
-import { type ApiError } from "./exceptions";
 
 // const format = winston.format.printf(({ level, message, label, timestamp }) => {
 //   return level === "warn" ? chalk.yellow(message) : message;
@@ -25,11 +24,6 @@ export interface LogErrorAttributes extends LogAttributes {
 /** Fields of the request needed for logs */
 export type RequestLogFields = Pick<NextApiRequest, "method" | "url">;
 
-/** Get the url path, without query params. */
-const getLogUrl = (url?: string): string | undefined => {
-  return (url ?? "").split("?")[0];
-};
-
 const _logger = winston.createLogger({
   transports: [new winston.transports.Console()],
   format: winston.format.json(),
@@ -50,10 +44,8 @@ export const logger = {
     _logger.warn(message, attributes);
   },
 
-  error: (error: ApiError, req: RequestLogFields): void => {
+  error: (error: ApiError): void => {
     const attributes: LogErrorAttributes = {
-      method: req.method,
-      url: getLogUrl(req.url),
       status: error.status,
       errorName: error.name,
       errorStack: error.stack,

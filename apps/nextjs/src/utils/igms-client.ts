@@ -1,8 +1,7 @@
+import { ClientError } from "@kennethkeim/api-utils-core";
 import axios, { type AxiosRequestConfig } from "axios";
 
 import { IgmsErrorCode, type IgmsResponse } from "@acme/igms";
-
-import { ClientError } from "./exceptions";
 
 // axios.create() vs new Axios() 🤨
 // https://github.com/axios/axios/issues/4710#issuecomment-1129302829

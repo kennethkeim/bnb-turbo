@@ -1,9 +1,7 @@
 import { type NextApiRequest } from "next";
+import { ClientError } from "@kennethkeim/api-utils-core";
 
 import { env } from "~/env.mjs";
-import { ClientError } from "./exceptions";
-
-// TODO: standardize error handling
 
 export type HttpMethod =
   | "OPTIONS"

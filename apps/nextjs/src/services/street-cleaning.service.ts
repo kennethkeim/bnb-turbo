@@ -1,17 +1,15 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { ClientError, handleApiError } from "@kennethkeim/api-utils-core";
 import { DateTime } from "luxon";
 
 import { prisma } from "@acme/db";
 import { type IgmsBookingResponse } from "@acme/igms";
 
 import { getImminentCleaning, localTZ } from "~/utils/date";
-import {
-  ClientError,
-  handleApiError,
-  NoActionRequiredError,
-} from "~/utils/exceptions";
+import { NoActionRequiredError } from "~/utils/exceptions";
 import { IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
+import { mailer } from "~/utils/mailer";
 import { getStreetCleaningMessage } from "~/utils/messages";
 import { allowMethods, auth } from "~/utils/request";
 import { env } from "~/env.mjs";
@@ -32,7 +30,7 @@ export async function streetCleaningHandler(
         where: { providerAccountId: listingCfg.host },
       });
     } catch (err) {
-      await handleApiError(err);
+      await handleApiError(err, logger);
     }
     const accessToken = hostAcct?.access_token ?? env.TEMP_IGMS_TOKEN;
     if (!accessToken) {
@@ -108,6 +106,6 @@ export async function streetCleaningHandler(
       message: `Sent alert to ${guest} for street cleaning: ${imminentCleaningIso}! 🚀`,
     });
   } catch (error) {
-    await handleApiError(error, request, response);
+    await handleApiError(error, logger, mailer, response);
   }
 }
