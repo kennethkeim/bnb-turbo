@@ -157,8 +157,8 @@ importers:
         specifier: '*'
         version: link:../../packages/igms
       '@kennethkeim/api-utils-core':
-        specifier: 0.0.10
-        version: 0.0.10
+        specifier: 0.0.13
+        version: 0.0.13
       '@t3-oss/env-nextjs':
         specifier: ^0.3.1
         version: 0.3.1(typescript@5.1.3)(zod@3.21.4)
@@ -3487,8 +3487,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: false
 
-  /@kennethkeim/api-utils-core@0.0.10:
-    resolution: {integrity: sha512-UK/YMC589I83DPm2L5up0tHpvjT1wSLwBS2Gjt2xM+I4GSBxzRnEd787nC3MyfqtCw9B6pb6Q3Iql8/IXtRa/g==}
+  /@kennethkeim/api-utils-core@0.0.13:
+    resolution: {integrity: sha512-cxPQFfwKZArMCjcqGV5KBDw7mTalM4oTrTDmUTAq86HDU7n+k6eJYs5/OFOAmAHLVrQSPbSK3H6++eWLPJbG4w==}
     dependencies:
       nodemailer: 6.9.8
       zod: 3.23.8

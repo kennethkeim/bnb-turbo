@@ -1,5 +1,10 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { ClientError, handleApiError } from "@kennethkeim/api-utils-core";
+import {
+  allowMethods,
+  authRequest,
+  ClientError,
+  handleApiError,
+} from "@kennethkeim/api-utils-core";
 import { DateTime } from "luxon";
 
 import { prisma } from "@acme/db";
@@ -10,7 +15,6 @@ import { IgmsUtil } from "~/utils/igms-client";
 import { logger } from "~/utils/logger";
 import { mailer } from "~/utils/mailer";
 import { getStreetCleaningMessage } from "~/utils/messages";
-import { allowMethods, auth } from "~/utils/request";
 import { env } from "~/env.mjs";
 import { type ListingConfig } from "~/models/cleanings";
 
@@ -20,8 +24,8 @@ export async function streetCleaningHandler(
   listingCfg: ListingConfig,
 ) {
   try {
-    allowMethods("POST", request.method);
-    auth(request);
+    allowMethods(["POST"], request.method);
+    authRequest(request.headers, env.TEMP_API_TOKEN);
 
     let hostAcct;
     try {
