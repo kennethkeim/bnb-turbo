@@ -1,4 +1,4 @@
-import { ClientError } from "@kennethkeim/api-utils-core";
+import { ClientError, ServiceError } from "@kennethkeim/api-utils-core";
 import axios, { type AxiosRequestConfig } from "axios";
 
 import { IgmsErrorCode, type IgmsResponse } from "@acme/igms";
@@ -21,6 +21,10 @@ export class IgmsUtil {
     const igmsPayload = response.data as IgmsResponse;
     if (igmsPayload.error?.code === IgmsErrorCode.Unauthorized) {
       throw new ClientError(401, "IGMS token is invalid.");
+    }
+    if (igmsPayload.error) {
+      const msg = `IGMS Error [${igmsPayload.error.code}] ${igmsPayload.error.message}`;
+      throw new ServiceError(500, msg);
     }
     return response.data as T;
   }
