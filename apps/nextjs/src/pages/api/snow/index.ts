@@ -1,12 +1,16 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { handleApiError } from "@kennethkeim/api-utils-core";
+import {
+  allowMethods,
+  authRequest,
+  handleApiError,
+} from "@kennethkeim/api-utils-core";
 
 import { logger } from "~/utils/logger";
 import { mailer } from "~/utils/mailer";
 import { MathUtil } from "~/utils/math";
 import { getSnowAlertMessage, getSnowSummary } from "~/utils/messages";
-import { allowMethods, auth } from "~/utils/request";
 import { getSnowDepth } from "~/utils/weather";
+import { env } from "~/env.mjs";
 import { type LatLng } from "~/models/locations";
 
 const FORECAST_HOURS = 48;
@@ -19,8 +23,8 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    allowMethods("POST", req.method);
-    auth(req);
+    allowMethods(["POST"], req.method);
+    authRequest(req.headers, env.TEMP_API_TOKEN);
 
     const snowDepth = await getSnowDepth(LANC, FORECAST_HOURS);
 
